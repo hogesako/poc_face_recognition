@@ -63,3 +63,8 @@ target/
 .python-version
 
 .idea/
+
+# usr files
+.devcontainer
+src/train_dir
+model.pickle
