@@ -1,5 +1,4 @@
 import face_recognition
-from sklearn import svm
 import os
 import pickle
 
