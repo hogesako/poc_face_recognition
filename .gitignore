@@ -67,4 +67,5 @@ target/
 # usr files
 .devcontainer
 src/train_dir
+src/test_dir
 model.pickle

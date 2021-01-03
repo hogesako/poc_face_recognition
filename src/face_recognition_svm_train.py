@@ -19,7 +19,10 @@ for person in train_dir:
     for person_img in pix:
         # Get the face encodings for the face in each image file
         face = face_recognition.load_image_file(train_dir_root + person + "/" + person_img)
-        face_bounding_boxes = face_recognition.face_locations(face)
+
+        face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=2)
+        if len(face_bounding_boxes) == 0:
+            face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=0, model="cnn")
 
         #If training image contains exactly one face
         if len(face_bounding_boxes) == 1:
