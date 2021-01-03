@@ -32,8 +32,7 @@ RUN cd ~ && \
 
 COPY . /root/face_recognition
 RUN cd /root/face_recognition && \
-    pip3 install -r requirements.txt && \
-    python3 setup.py install
+    pip3 install -r requirements.txt
 
 CMD cd /root/face_recognition/src && \
     python3 face_recognition_svm_predict.py
