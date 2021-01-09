@@ -2,7 +2,9 @@ import face_recognition
 import os
 import pickle
 
-with open('model.pickle', mode='rb') as fp:
+work_dir_root = "/root/work/"
+
+with open(work_dir_root + 'model.pickle', mode='rb') as fp:
     clf = pickle.load(fp)
 
 # Load the test image with unknown faces into a numpy array

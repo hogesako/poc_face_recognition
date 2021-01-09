@@ -66,6 +66,7 @@ target/
 
 # usr files
 .devcontainer
+work
 src/train_dir
 src/test_dir
 src/devided

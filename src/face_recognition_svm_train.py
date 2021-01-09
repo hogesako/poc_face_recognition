@@ -9,7 +9,8 @@ encodings = []
 names = []
 
 # Training directory
-train_dir_root = "train_dir/"
+work_dir_root = "/root/work/"
+train_dir_root = work_dir_root + "train_dir/"
 train_dir = os.listdir(train_dir_root)
 
 # Loop through each person in the training directory
@@ -42,5 +43,5 @@ for person in train_dir:
 clf = svm.SVC(gamma='scale')
 clf.fit(encodings,names)
 
-with open('model.pickle', mode='wb') as fp:
+with open(work_dir_root + 'model.pickle', mode='wb') as fp:
     pickle.dump(clf, fp)
