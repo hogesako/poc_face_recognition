@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  face_reco:
+    build:
+      context: .
+      dockerfile: Dockerfile.jetson
+    command: ["python3", "face_recognition_svm_predict_sqs.py"]
+    env_file: /root/env/aws.env
+    volumes:
+      - "/var/run/work/:/root/work"
