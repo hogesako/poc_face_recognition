@@ -1,0 +1,11 @@
+[Unit]
+Description = face recognition sqs
+
+[Service]
+ExecStart = /home/hogesako/poc_face_recognition/src/face_recognition_svm_predict_sqs.py
+Restart = always
+Type = simple
+EnvironmentFile=/home/hogesako/aws.env
+
+[Install]
+WantedBy = multi-user.target
