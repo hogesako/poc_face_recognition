@@ -13,6 +13,7 @@ work_dir_root = "/root/work/"
 train_dir_root = work_dir_root + "train_dir/"
 train_dir = os.listdir(train_dir_root)
 
+start = time.time()
 # Loop through each person in the training directory
 for person in train_dir:
     pix = os.listdir(train_dir_root + person)
@@ -24,6 +25,7 @@ for person in train_dir:
 
         face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=2)
         if len(face_bounding_boxes) == 0:
+            print(person + "/" + person_img + " using cnn")
             gc.collect()
             face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=0, model="cnn")
 
@@ -34,7 +36,7 @@ for person in train_dir:
             encodings.append(face_enc)
             names.append(person)
         else:
-            print(person + "/" + person_img + " was skipped and can't be used for training")
+            print(person + "/" + person_img + " was skipped and can't be used for training. bounding_box length is " + len(face_bounding_boxes))
 
         del face
         gc.collect()
@@ -45,3 +47,6 @@ clf.fit(encodings,names)
 
 with open(work_dir_root + 'model.pickle', mode='wb') as fp:
     pickle.dump(clf, fp)
+
+elapsed_time = time.time() - start
+print ("elapsed_time:{0}".format(elapsed_time) + "[sec]")
