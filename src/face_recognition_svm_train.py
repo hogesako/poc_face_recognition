@@ -3,13 +3,17 @@ from sklearn import svm
 import pickle
 import os
 import gc
+import time
+import shutil
+import PIL
+from PIL import Image, ImageDraw
 
 # Training the SVC classifier
 encodings = []
 names = []
 
 # Training directory
-work_dir_root = "/root/work/"
+work_dir_root = "/home/hogesako/poc_face_recognition/work/"
 train_dir_root = work_dir_root + "train_dir/"
 train_dir = os.listdir(train_dir_root)
 
@@ -20,23 +24,41 @@ for person in train_dir:
 
     # Loop through each training image for the current person
     for person_img in pix:
+        img = Image.open(train_dir_root + person + "/" + person_img)
+        if img.width > 1024:
+            print("resized "+ str(img.width) + ":" + str(img.height))
+            height = round(img.height * 1024 / img.width)
+            img = img.resize((1024, height), resample=PIL.Image.BILINEAR)
+            img.save(train_dir_root + person + "/" + person_img)
+            del img
+        img = Image.open(train_dir_root + person + "/" + person_img)
+        if img.height > 1024:
+            print("resized "+ str(img.width) + ":" + str(img.height))
+            width = round(img.width * 1024 / img.height)
+            img = img.resize((width, 1024), resample=PIL.Image.BILINEAR)
+            img.save(train_dir_root + person + "/" + person_img)
+        del img
         # Get the face encodings for the face in each image file
         face = face_recognition.load_image_file(train_dir_root + person + "/" + person_img)
 
-        face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=2)
+        print(person + "/" + person_img + " using cnn")
+        face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=0, model="cnn")
+        print(person + "/" + person_img + " finish cnn")
         if len(face_bounding_boxes) == 0:
-            print(person + "/" + person_img + " using cnn")
-            gc.collect()
-            face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=0, model="cnn")
+            print(person + "/" + person_img + " using hog")
+            face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=2)
+            print(person + "/" + person_img + " finish hog")
 
         #If training image contains exactly one face
         if len(face_bounding_boxes) == 1:
-            face_enc = face_recognition.face_encodings(face, face_bounding_boxes)[0]
+            face_enc = face_recognition.face_encodings(face, face_bounding_boxes, model="large")[0]
             # Add face encoding for current image with corresponding label (name) to the training data
             encodings.append(face_enc)
             names.append(person)
+            shutil.move(train_dir_root + person + "/" + person_img, work_dir_root + "ok_faces/" + person)
         else:
-            print(person + "/" + person_img + " was skipped and can't be used for training. bounding_box length is " + len(face_bounding_boxes))
+            print(person + "/" + person_img + " was skipped and can't be used for training. bounding_box length is " + str(len(face_bounding_boxes)))
+            shutil.move(train_dir_root + person + "/" + person_img, work_dir_root + "no_faces/" + person)
 
         del face
         gc.collect()

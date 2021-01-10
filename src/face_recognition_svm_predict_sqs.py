@@ -22,10 +22,10 @@ def analyze(tweet):
 def img_analyze(image_url, tweet_id):
     response = urllib.request.urlopen(image_url)
     test_image = face_recognition.load_image_file(response)
-    face_locations = face_recognition.(test_image, number_of_times_to_upsample=0, model="cnn")
+    face_locations = face_recognition.face_locations(test_image, number_of_times_to_upsample=0, model="cnn")
     no = len(face_locations)
     for i in range(no):
-        test_image_enc = face_recognition.face_encodings(test_image)[i]
+        test_image_enc = face_recognition.face_encodings(test_image, face_locations, model="large")[i]
         np_name = clf.predict([test_image_enc])
         name = np_name.tolist()[0]
         if name == 'kusudaaina':
