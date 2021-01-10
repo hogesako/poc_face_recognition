@@ -24,7 +24,6 @@ def img_analyze(image_url, tweet_id):
         response = urllib.request.urlopen(image_url)
     except urllib.error.URLError as e:
         return False
-    split_path = os.path.split(image_url)
     test_image = face_recognition.load_image_file(response)
     face_locations = face_recognition.face_locations(test_image, number_of_times_to_upsample=0, model="cnn")
     no = len(face_locations)
@@ -34,7 +33,8 @@ def img_analyze(image_url, tweet_id):
         name = np_name.tolist()[0]
         if name == 'kusudaaina':
             pil_image = Image.fromarray(test_image)
-            pil_image.save(work_dir_root + 'save/' + split_path[1], quality=95)
+            split_path = os.path.split(image_url)
+            pil_image.save(work_dir_root + 'save/' + tweet_id + "_" + split_path[1], quality=95)
             del pil_image
             return True
     return False
