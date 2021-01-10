@@ -25,17 +25,17 @@ for person in train_dir:
     # Loop through each training image for the current person
     for person_img in pix:
         img = Image.open(train_dir_root + person + "/" + person_img)
-        if img.width > 1024:
+        if img.width > 1280:
             print("resized "+ str(img.width) + ":" + str(img.height))
-            height = round(img.height * 1024 / img.width)
-            img = img.resize((1024, height), resample=PIL.Image.BILINEAR)
+            height = round(img.height * 1280 / img.width)
+            img = img.resize((1280, height), resample=PIL.Image.BILINEAR)
             img.save(train_dir_root + person + "/" + person_img)
             del img
         img = Image.open(train_dir_root + person + "/" + person_img)
-        if img.height > 1024:
+        if img.height > 1280:
             print("resized "+ str(img.width) + ":" + str(img.height))
-            width = round(img.width * 1024 / img.height)
-            img = img.resize((width, 1024), resample=PIL.Image.BILINEAR)
+            width = round(img.width * 1280 / img.height)
+            img = img.resize((width, 1280), resample=PIL.Image.BILINEAR)
             img.save(train_dir_root + person + "/" + person_img)
         del img
         # Get the face encodings for the face in each image file
@@ -49,16 +49,16 @@ for person in train_dir:
             face_bounding_boxes = face_recognition.face_locations(face, number_of_times_to_upsample=2)
             print(person + "/" + person_img + " finish hog")
 
-        #If training image contains exactly one face
-        if len(face_bounding_boxes) == 1:
-            face_enc = face_recognition.face_encodings(face, face_bounding_boxes, model="large")[0]
-            # Add face encoding for current image with corresponding label (name) to the training data
-            encodings.append(face_enc)
-            names.append(person)
-            shutil.move(train_dir_root + person + "/" + person_img, work_dir_root + "ok_faces/" + person)
-        else:
+        if len(face_bounding_boxes) == 0:
             print(person + "/" + person_img + " was skipped and can't be used for training. bounding_box length is " + str(len(face_bounding_boxes)))
             shutil.move(train_dir_root + person + "/" + person_img, work_dir_root + "no_faces/" + person)
+        else:
+            no = len(face_bounding_boxes)
+            for i in range(no):
+                face_enc = face_recognition.face_encodings(face, face_bounding_boxes, model="large")[i]
+                encodings.append(face_enc)
+                names.append(person)
+            #shutil.move(train_dir_root + person + "/" + person_img, work_dir_root + "ok_faces/" + person)
 
         del face
         gc.collect()
