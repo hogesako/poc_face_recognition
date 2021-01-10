@@ -1,0 +1,22 @@
+FROM nvcr.io/nvidia/l4t-base:r32.3.1
+
+RUN set -x && \
+    apt-get update && \
+    apt-get install -y cmake curl cython g++ gfortran git libblas-dev libjpeg-dev liblapack-dev python3-dev zlib1g-dev
+
+RUN set -x && \
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python3 get-pip.py
+
+COPY include /usr/include
+RUN set -x && \
+    git clone -b 'v19.21' --single-branch https://github.com/davisking/dlib.git && \
+    ln -s /usr/lib/aarch64-linux-gnu/libcudnn.so.7 /usr/lib/aarch64-linux-gnu/libcudnn.so && \
+    cd /dlib; python3 /dlib/setup.py install --no USE_AVX_INSTRUCTIONS
+
+COPY . /root/face_recognition
+RUN cd /root/face_recognition && \
+    python3 -m pip install -r requirements.txt
+
+WORKDIR /root/face_recognition/src
+CMD python3 face_recognition_svm_predict_sqs.py

@@ -71,3 +71,4 @@ src/train_dir
 src/test_dir
 src/devided
 model.pickle
+include
